@@ -1,103 +1,62 @@
-<h1 align="center">💬 WhatsApp Chat Analyser</h1>
-<p align="center">
-  A powerful tool to analyze exported WhatsApp chats, visualize group dynamics, and extract insightful messaging patterns from your conversations.
-</p>
+# WhatsApp Chat Analyzer
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" />
-  <img src="https://img.shields.io/badge/Status-Complete-success.svg" />
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" />
-  <img src="https://img.shields.io/badge/Analysis-Chat_Evolution-orange.svg" />
-</p>
+Turn a WhatsApp chat export into readable statistics — message counts, activity patterns, emoji and word usage, and conversation timelines.
 
----
+## Your chat never leaves your browser
 
-## 🧠 Project Description
+This is the core design constraint, not a marketing line:
 
-This project analyzes raw WhatsApp chat exports (`.txt` format) to uncover trends, participant behavior, and communication patterns. From identifying the most active users to generating emoji usage stats and word clouds, this analyser provides a detailed breakdown of both personal and group conversations.
+- There is **no backend**. The app is static files.
+- The app makes **no network requests** after the initial page load. No API calls, no analytics, no telemetry, no error reporting.
+- Your chat file is read with the browser's `File` API, parsed in a Web Worker, and held in memory only. It is never uploaded, and never written to disk or `localStorage`.
+- Closing or refreshing the tab discards everything.
 
-> 📂 Supports both personal and group chats  
-> 🧼 Automatically cleans and processes raw exported data
+You can verify this yourself: open DevTools → Network, run an analysis, and confirm zero requests.
 
----
+## Getting your chat export
 
-## 📌 Features
+Export as **"Without Media"** — media files are not analyzed and only make the export larger.
 
-- 📅 **Timeline Analysis** – Message frequency over time (daily, monthly, yearly)
-- 👤 **Most Active Users** – Detect top contributors in group chats
-- ⏰ **Hourly & Weekly Activity** – Peak hours and busiest days of the week
-- 🧾 **Message Statistics** – Message count, word count, media shared, links, etc.
-- 🌐 **Word Cloud** – Most common words used in the chat
-- 😂 **Emoji Analysis** – Frequently used emojis and their counts
-- 🗂️ **Media & Link Sharing** – Analyze shared media and URLs
-- 🔍 **User-wise Breakdown** – Personalized message stats per participant
-- 🧼 **Text Cleaning & Preprocessing** – Handles system messages, timestamps, and formatting
+**Android**
+1. Open the chat → ⋮ menu → **More** → **Export chat**
+2. Choose **Without media**
+3. Save the `.txt` file (or the `.zip`, then unzip it)
 
----
+**iOS**
+1. Open the chat → tap the contact/group name at the top
+2. Scroll down → **Export Chat**
+3. Choose **Without Media**
+4. Save the `.txt` file (or the `.zip`, then unzip it)
 
-## 🖼️ Sample Visualizations
+WhatsApp often wraps the export in a `.zip`. **Unzip it and upload the `.txt` inside** — the app will tell you if you upload the zip by mistake.
 
-<p align="center">
-  <img src="chat_wordcloud.png" alt="Word Cloud" width="600"/>
-  <br />
-  <img src="message_timeline.png" alt="Message Timeline" width="600"/>
-</p>
+## Supported export formats
 
----
+The parser auto-detects the format and date order from the file itself:
 
-## 📁 Data Input
+| | |
+|---|---|
+| Platforms | Android (`12/03/2024, 14:32 - Name: msg`) and iOS (`[12/03/2024, 14:32:05] Name: msg`) |
+| Clock | 24-hour, and 12-hour with `AM`/`PM` or `a.m.`/`p.m.` (including the narrow no-break space newer exports use) |
+| Date order | `DD/MM` and `MM/DD`, inferred by scanning the whole file; `DD/MM` when genuinely ambiguous |
+| Separators | `/`, `.`, and `-` |
+| Years | 2-digit and 4-digit |
+| Also handled | Multi-line messages, system/notification messages, deleted messages, media placeholders, right-to-left and direction marks, CRLF line endings |
 
-- **Source**: Export your WhatsApp chat from the app
-  - On WhatsApp: `More Options` → `Export Chat` → Choose without media → Save `.txt` file
-- **Format Supported**: `.txt` format (as exported from WhatsApp)
+System messages ("Alice added Bob", "Bob left", the encryption notice) are detected and excluded from per-person statistics rather than being attributed to whoever spoke last.
 
-> ⚠️ The exported `.txt` file is **not included** in this repository due to privacy reasons. Please export your own chat file to use the analyser.
+## Running locally
 
----
-
-## 🛠️ Technologies Used
-
-- **Python 3.8+**
-- **Pandas** – Data manipulation
-- **Matplotlib** & **Seaborn** – Visualizations
-- **WordCloud** – Word frequency visualization
-- **Emoji** – Emoji parsing and analysis
-- **Streamlit** *(optional)* – For building interactive dashboards
-- **Jupyter Notebook** – Interactive data analysis
-
----
-
-## 🚀 Getting Started
-
-### ✅ Prerequisites
-
-Ensure you have:
-- Python 3.8 or above
-- pip (Python package installer)
-- Jupyter Notebook or Streamlit installed
-
-### 📦 Installation
+Requires Node 20.19+ or 22.12+.
 
 ```bash
-# Clone the repository
-git clone https://github.com/sid/whatsapp-chat-analyser.git
+npm install
+npm run dev      # start the dev server
+npm run build    # production build to dist/
+npm run preview  # serve the production build
+npm test         # run the test suite
+```
 
-# Navigate into the folder
-cd whatsapp-chat-analyser
+## Tech
 
-# (Optional) Create a virtual environment
-python -m venv chat_env
-
-# Activate the virtual environment
-# Windows
-chat_env\Scripts\activate
-# macOS/Linux
-source chat_env/bin/activate
-
-# Install required packages
-pip install -r requirements.txt
-
-# Run the notebook or script
-jupyter notebook
-# or
-streamlit run app.py
+Vite 5, React 18, Tailwind CSS 3, Recharts 3, Vitest. No backend, no database, no accounts.

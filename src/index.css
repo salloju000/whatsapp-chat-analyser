@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light theme. Values are RGB triplets so Tailwind's <alpha-value> works. */
+  :root {
+    --surface-base: 250 250 250;
+    --surface-card: 255 255 255;
+    --surface-raised: 244 244 245;
+    --content-primary: 24 24 27;
+    --content-secondary: 63 63 70;
+    --content-muted: 100 100 110;
+    --edge: 228 228 231;
+    color-scheme: light;
+  }
+
+  .dark {
+    --surface-base: 10 10 10;
+    --surface-card: 18 18 18;
+    --surface-raised: 24 24 24;
+    --content-primary: 255 255 255;
+    --content-secondary: 212 212 216;
+    --content-muted: 161 161 170;
+    --edge: 42 42 42;
+    color-scheme: dark;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-surface-base text-content-secondary font-sans antialiased;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* Tailwind Preflight removes the default outline; without this, keyboard
+     focus is completely invisible. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-surface-base;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer base {
+  :root {
+    --orb-alpha: 0.22;
+    --grid-alpha: 0.06;
+  }
+
+  .dark {
+    --orb-alpha: 0.38;
+    --grid-alpha: 0.05;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@layer components {
+  .home-grid {
+    background-image:
+      linear-gradient(to right, rgb(var(--content-primary) / var(--grid-alpha)) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--content-primary) / var(--grid-alpha)) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 75% 60% at 50% 35%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 35%, #000 20%, transparent 75%);
+  }
+
+  /* Soft-edged orbs drawn with radial gradients rather than filter: blur(),
+     so animating them is a cheap composited transform, not a repaint. */
+  .aurora-orb {
+    border-radius: 9999px;
+    will-change: transform;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-semibold text-white
+      bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500
+      shadow-[0_10px_30px_-8px_rgb(124_58_237_/_0.6)] disabled:opacity-70 disabled:cursor-wait;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-semibold
+      text-content-primary bg-content-primary/5 hover:bg-content-primary/10 border border-edge;
+  }
+
+  .glass-card {
+    @apply bg-surface-card/80 backdrop-blur-xl border border-edge rounded-2xl shadow-sm;
+  }
+
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400;
+  }
+
+  .glow-effect {
+    box-shadow: 0 0 24px rgb(99 102 241 / 0.25);
+  }
+}
+
+@layer utilities {
+  .glow-on-hover:hover {
+    box-shadow: 0 0 20px rgb(99 102 241 / 0.3);
+  }
+}
+
+button,
+a,
+.card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-surface-base;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1 0%, #ec4899 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4f46e5 0%, #db2777 100%);
+}
